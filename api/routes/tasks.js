@@ -11,5 +11,11 @@ router.get('/', (request, response) => {
    message: 'Handling GET requests to /tasks'
  });
 })
+router.get('/:tasksId', (request, response) => {
+const id = request.params.tasksId;
+ response.status(200).json({
+   message: `Task with ID = ${id} was fetched`
+ });
+})
 
 module.exports = router;
