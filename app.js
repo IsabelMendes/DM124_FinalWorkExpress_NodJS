@@ -6,6 +6,7 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 app.use('/api/tasks', require('./api/routes/tasks'));
+app.use('/api/products', require('./api/routes/products'));
 app.use(require('./api/middleware/not-found'));
 
 module.exports = app;
