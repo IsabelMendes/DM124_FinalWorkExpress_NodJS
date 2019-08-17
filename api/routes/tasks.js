@@ -2,12 +2,17 @@ const express = require('express');
 const router = express.Router();
 const checkAuth = require('../middleware/check-auth');
 
+let db = {};
+let sequence = 0;
+
 router.post('/', checkAuth, (request, response) => {
     const newTask = {
-        id: Date.now(),
+        id: ++sequence,
         done: request.body.done || false,
         description: request.body.description
-    }
+    };
+    db [newTask.id] = newTask;
+
  response.status(201).json({
    message: 'The task has been created',
    newTask
