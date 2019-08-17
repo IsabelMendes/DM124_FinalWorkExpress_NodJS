@@ -19,14 +19,14 @@ const id = request.params.tasksId;
  });
 })
 
-router.patch('/:taskId', (request, response) => {
+router.patch('/:taskId',checkAuth, (request, response) => {
     const id = request.params.tasksId;
      response.status(200).json({
        message: `Task with ID = ${id} was updated`
      });
     })
 
-router.delete('/:taskId', (request, response) => {
+router.delete('/:taskId', checkAuth, (request, response) => {
     const id = request.params.tasksId;
         response.status(200).json({
         message: `Task with ID = ${id} was deleted`
