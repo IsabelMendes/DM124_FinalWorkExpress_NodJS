@@ -3,15 +3,23 @@ const router = express.Router();
 const checkAuth = require('../middleware/check-auth');
 
 router.post('/', checkAuth, (request, response) => {
+    const newTask = {
+        id: Date.now(),
+        done: request.body.done || false,
+        description: request.body.description
+    }
  response.status(201).json({
-   message: 'The task has been created'
+   message: 'The task has been created',
+   newTask
  });
 })
+
 router.get('/', (request, response) => {
  response.status(200).json({
    message: 'Takes have been fetched'
  });
 })
+
 router.get('/:taskId', (request, response) => {
 const id = request.params.tasksId;
  response.status(200).json({
