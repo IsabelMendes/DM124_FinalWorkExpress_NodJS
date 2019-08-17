@@ -11,12 +11,10 @@ router.post('/', checkAuth, (request, response) => {
         done: request.body.done || false,
         description: request.body.description
     };
+
     db [newTask.id] = newTask;
 
- response.status(201).json({
-   message: 'The task has been created',
-   newTask
- });
+    response.status(201).json(newTask);
 })
 
 router.get('/', (request, response) => {
