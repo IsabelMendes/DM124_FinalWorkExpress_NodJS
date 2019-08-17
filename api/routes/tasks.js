@@ -34,11 +34,15 @@ task
  });
 
 router.patch('/:taskId',checkAuth, (request, response) => {
-    const id = request.params.tasksId;
-     response.status(200).json({
-       message: `Task with ID = ${id} was updated`
-     });
-    })
+    const task = db[request.params.taskId];
+    if (task) {
+      task.done = request.body.done || task.done;
+      task.description = request.body.description || task.description;
+      response.json(task);
+    } else {
+      notFound(request, response);
+    }
+   });   
 
 router.delete('/:taskId', checkAuth, (request, response) => {
     const id = request.params.tasksId;
