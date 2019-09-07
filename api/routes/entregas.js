@@ -2,26 +2,45 @@ const express = require('express');
 const router = express.Router();
 const checkAuth = require('../middleware/check-auth');
 const notFound = require('../middleware/not-found');
+const uuidv1 = require('uuid/v1');
 
-let db = {};
-let sequence = 0;
+
+var AWS = require("aws-sdk");
+
+AWS.config.update({
+  region: "us-east-1",
+  endpoint: "dynamodb.us-east-1.amazonaws.com"
+});
+
+var docClient = new AWS.DynamoDB.DocumentClient();
+var table = "entrega";
 
 router.post('/', checkAuth, (request, response) => {
-    const newEntrega = {
-        id: ++sequence,
-        idPedido:request.body.idPedido,
-        idCliente:request.body.idCliente,
-        nomeRecebedor: request.body.nomeRecebedor,
-        cpfRecebedor: request.body.cpfRecebedor,
-        recebedorComprador:request.body.recebedorComprador,
-        dataEntrega:request.body.dataEntrega,
-        horaEntrega: request.body.horaEntrega,
-        localizaçãoGeografica: request.body.localizaçãoGeografica
+    var params = {
+        TableName:table,
+        Item:{
+            "id":uuidv1(),
+            "idPedido":request.body.idPedido,
+            "idCliente":request.body.idCliente,
+            "nomeRecebedor": request.body.nomeRecebedor,
+            "cpfRecebedor": request.body.cpfRecebedor,
+            "recebedorComprador":request.body.recebedorComprador,
+            "dataEntrega":request.body.dataEntrega,
+            "horaEntrega": request.body.horaEntrega,
+            "localizaçãoGeografica": request.body.localizaçãoGeografica
+        }
     };
 
-    db[newEntrega.id] = newEntrega;
-
-    response.status(201).json(newEntrega);
+    docClient.put(params, function(err, data) {
+        if (err) {
+            console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+            response.status(400).json(JSON.stringify(err, null, 2));
+        } else {
+            console.log("Added item:", JSON.stringify(data, null, 2));
+            response.status(201).json(JSON.stringify(data, null, 2));
+        }
+    });
+    
 })
 
 router.get('/', (request, response) => {
