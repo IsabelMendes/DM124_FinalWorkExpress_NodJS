@@ -33,17 +33,21 @@ router.post('/', checkAuth, (request, response) => {
 
     docClient.put(params, function(err, data) {
         if (err) {
-            console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
-            response.status(400).json(JSON.stringify(err, null, 2));
+            console.error("Unable to add item. Error JSON:", err);
+            response.status(400).json(err);
         } else {
-            console.log("Added item:", JSON.stringify(data, null, 2));
-            response.status(201).json(JSON.stringify(data, null, 2));
+            console.log("Added item:", data);
+            response.status(201).json(data);
         }
     });
     
 })
 
 router.get('/', (request, response) => {
+
+
+
+    
     const toArray = key => db[key];
     const entregas = Object.keys(db).map(toArray);
     entregas && entregas.length
@@ -52,10 +56,23 @@ router.get('/', (request, response) => {
 });
 
 router.get('/:entregaId', (request, response) => {
-    const entrega = db[request.params.entregaId];
-    entrega
-        ? response.json(entrega)
-        : notFound(request, response);
+    var params = {
+        TableName: table,
+        Key:{
+            "id": request.params.entregaId
+        }
+    };
+
+    docClient.get(params, function(err, data) {
+        if (err) {
+            console.error("Unable to read item. Error JSON:", err);
+            notFound(request,response);
+        } else {
+            console.log("GetItem succeeded:", data);
+            response.json(data);
+        }
+    });
+
 });
 
 router.patch('/:entregaId', checkAuth, (request, response) => {
